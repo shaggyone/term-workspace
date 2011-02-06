@@ -54,7 +54,7 @@ h2. Profile example
   add_window do |wo|    # the second window, user 
     wo.profile  = "Small"             # Small font profile
     wo.geometry = "91x28+10000+10000"   # Small window at right bottom corner
-    wo.add_tab :command => "autotest"       # autotes
+    wo.add_tab :command => "autotest"       # autotest
     wo.add_tab :command => "compass watch"  # compass
     wo.add_tab :command => "rails s"        # local rails server :)
   end</code></pre>
