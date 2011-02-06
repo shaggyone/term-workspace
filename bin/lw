@@ -39,10 +39,6 @@ module Term
           cmd = "gnome-terminal #{shell_options.join(' ')}"
           puts cmd
           system cmd
-          Dir.glob "/tmp/bash*" do |f|
-            puts f
-            puts `cat #{f}`
-          end
         end
       end
     end
