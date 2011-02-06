@@ -11,6 +11,14 @@ I've created this app.
 
 It's a command line tool. After you install it you can run it with keys:
 
+h2. Installing
+
+<pre>
+  git clone git://github.com/shaggyone/term-workspace.git
+  cd term-workspace
+  rake install
+  </pre>
+
 h2. Command line syntax
 
 <pre>
