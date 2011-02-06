@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Term::Workspace::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Shaggyone"]
-  s.email       = ["victor@zagorski.ru"]
-  s.homepage    = ""
+  s.email       = [""]
+  s.homepage    = "https://github.com/shaggyone/term-workspace"
   s.summary     = %q{}
   s.description = %q{}
 
