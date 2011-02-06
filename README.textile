@@ -51,7 +51,7 @@ h2. Profile example
     end
   end
 
-  add_window do |wo|    # the second window, user 
+  add_window do |wo|    # the second window, background tasks will run here.
     wo.profile  = "Small"             # Small font profile
     wo.geometry = "91x28+10000+10000"   # Small window at right bottom corner
     wo.add_tab :command => "autotest"       # autotest
