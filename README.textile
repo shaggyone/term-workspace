@@ -1,0 +1,59 @@
+h1. term-workspace
+
+This app is designed to simplify your life.
+
+It's common, that a user starts an fixed set of apps in fixed set of terminal windows. 
+
+For example, when I work with rails app I open two windows. First, the large one I use for
+editors, command line and rails console. The second one I use to start local server and
+some tasks, such as autotest. So I when got tied to open the same windows each time, 
+I've created this app.
+
+It's a command line tool. After you install it you can run it with keys:
+
+h2. Command line syntax
+
+<pre>
+  Usage: lw command [options]
+      -l, --list                       List available workspaces
+      -e, --edit [profile_name]        Edit the desired workspace. Workspace will be created, if not exists.
+      -r, --run [profile_name]         Open the desired workspace
+      -h, --help                       Display help screen
+
+h2. Profile example
+
+<pre><code>basedir "~/rails-apps/simple-blog"
+  add_window do |wo|
+    wo.profile  = "Default"         # Профиль настраивается в терминале
+    wo.geometry = "165x57+0+0"      # Большое окно, закрепляем в левом верхнем углу
+    wo.add_tab do |to|              # редактор №1 весь проект
+      to.command = 'vim'
+    end
+    wo.add_tab do |to|              # редактор №2 папка app
+      to.command = 'vim'
+      to.dir = 'app'
+    end
+    wo.add_tab do |to|              # редактор №3 спецификация
+      to.command = 'vim'
+      to.dir = 'spec'
+      to.title = "rspec"
+    end
+    wo.add_tab do |to|              # консоль №1
+      to.title = "Shell"
+    end
+    wo.add_tab do |to|              # консоль №2
+      to.title = "Shell #2"
+    end
+    wo.add_tab do |to|              # консоль рельсов
+      to.command = "rails c"
+      to.title = "rails console"
+    end
+  end
+
+  add_window do |wo|    # 2-е окно, тут крутятся фоновые задачи
+    wo.profile  = "Small"             # профиль с мелким шрифтом
+    wo.geometry = "91x28+10000+10000"   # окно небольшое, привязываем к правому нижнему углу
+    wo.add_tab :command => "autotest"       # автотест
+    wo.add_tab :command => "compass watch"  # компасс
+    wo.add_tab :command => "rails s"        # локальный сервер (c) Капитан Очевидность.
+  end

@@ -1,0 +1,148 @@
+#!/usr/bin/env ruby
+# The launch-workspace command line utility
+
+require "rubygems"
+
+require 'fileutils'
+require 'optparse'
+
+module Term
+  module Workspace
+    class WindowOptions
+      attr_accessor :profile, :geometry, :basedir, :tabs
+      def add_tab(options={}, &block)
+         to = TabOptions.new
+         [:title, :active, :command, :dir].each do |x|
+           to.send "#{x}=", options[x] unless options[x].nil?
+         end
+         yield to unless block.nil?
+         self.tabs = [] if tabs.nil?
+         self.tabs <<= to
+         to
+      end
+
+      def shell_options
+        args = []
+        Dir.chdir File.expand_path(basedir || ".") do
+          args <<= "--profile=\"#{profile}\""   unless profile.nil?
+          args <<= "--geometry=\"#{geometry}\"" unless geometry.nil?
+          (tabs||[]).each do |tab|
+            args <<= tab.shell_options
+          end
+        end
+        args
+      end
+
+      def open_window
+        Dir.chdir File.expand_path(basedir || ".") do
+          cmd = "gnome-terminal #{shell_options.join(' ')}"
+          puts cmd
+          system cmd
+        end
+      end
+    end
+
+    class TabOptions
+      attr_accessor :title, :active, :command, :dir
+      def shell_options
+        args = []
+        args <<= "--tab"
+        args <<= "--active" if active
+        args <<= "--title=\"#{title}\"" if title
+        args <<= "--command=\"bash -c \\\"#{command.gsub('"', "\\\\\\\"")}\\\"\"" if command
+        args <<= "--working-directory=\"#{File.expand_path(dir)}\"" if dir
+        args
+      end
+    end
+
+    module Tool
+      def basedir(dir=nil)
+        $basedir = dir unless dir.nil?
+        $basedir
+      end
+
+      def add_window(options={}, &block)
+        wo = Term::Workspace::WindowOptions.new
+        [:profile_name, :geometry, :basedir].each do |x|
+          to.send "#{x}=", options[x] unless options[x].nil?
+        end
+        yield wo unless block.nil?
+        $windows = [] if $windows.nil?
+        $windows <<= wo
+        wo
+      end
+
+      def open_windows
+        Dir.chdir File.expand_path(basedir || ".") do
+          ($windows||[]).each do |w|
+             w.open_window
+           end
+        end
+      end
+
+      def open_gterm_window(options)
+        args = []
+        args <<= "--profile=\"#{options[:profile]}\"" unless options[:profile].nil?
+        args <<= "--geometry=#{options[:geometry]}"  unless options[:geometry].nil?
+  
+        options[:tabs].each do |tab|
+          args <<= "--tab"
+          args <<= "--active" if tab[:active]
+          args <<= "--title=\"#{tab[:title]}\""     unless tab[:title].nil?
+          args <<= "--command=\"bash -c \\\"#{tab[:command].gsub("\"", "\\\"")}\\\"\"" unless tab[:command].nil?
+          args <<= "--working-directory=\"#{File.expand_path(tab[:dir])}\"" unless tab[:dir].nil?
+        end unless options[:tabs].nil?
+        cmd = "gnome-terminal #{[args].join(" ")}"
+        puts cmd
+        system cmd
+      end
+    end
+
+    module CommandLineParser
+      @@main_dir = File.expand_path("~/.lw")
+      @@profiles_dir = File.expand_path(File.join(@@main_dir, "profiles"))
+      @@profiles_pattern = File.expand_path(File.join(@@profiles_dir, "*.profile.rb"))
+
+
+      def self.run(obj)
+        FileUtils.makedirs @@main_dir
+        FileUtils.makedirs @@profiles_dir 
+        opt_parser = OptionParser.new do |opts|
+          opts.banner = "Usage: lw command [options]"
+          opts.on "-l", '--list', 'List available workspaces' do
+            profiles = Dir.glob File.join(@@profiles_pattern)
+            profiles.map! do |x|
+              re = /^(.*?)\.profile\.rb$/
+              a = re.match(File.basename(x))
+              a[1]
+            end.sort!
+            puts profiles
+            exit
+          end
+          opts.on '-e [profile_name]', '--edit [profile_name]',  'Edit the desired workspace. Workspace will be created, if not exists.' do |profile_name|
+            profile_filename = File.join(@@profiles_dir, "#{profile_name}.profile.rb")
+            cmd = "bash -c \"vim #{profile_filename}\""
+            puts cmd
+            system cmd
+          end
+          opts.on '-r [profile_name]', '--run [profile_name]', "Open the desired workspace" do |profile_name| 
+            profile_filename = File.join(@@profiles_dir, "#{profile_name}.profile.rb")
+            require profile_filename
+
+            o = Object.new
+            o.extend Tool
+            o.open_windows
+          end
+          opts.on '-h', '--help', 'Display help screen' do
+            puts opts
+            exit
+          end
+        end
+        opt_parser.parse!
+      end
+    end    
+  end
+end
+
+extend Term::Workspace::Tool
+Term::Workspace::CommandLineParser.run(self)
