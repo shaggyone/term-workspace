@@ -18,7 +18,7 @@ h2. Command line syntax
       -l, --list                       List available workspaces
       -e, --edit [profile_name]        Edit the desired workspace. Workspace will be created, if not exists.
       -r, --run [profile_name]         Open the desired workspace
-      -h, --help                       Display help screen
+      -h, --help                       Display help screen</pre>
 
 h2. Profile example
 
@@ -48,7 +48,7 @@ h2. Profile example
       to.command = "rails c"
       to.title = "rails console"
     end
-  end
+  end</code></pre>
 
   add_window do |wo|    # 2-е окно, тут крутятся фоновые задачи
     wo.profile  = "Small"             # профиль с мелким шрифтом
