@@ -22,38 +22,39 @@ h2. Command line syntax
 
 h2. Profile example
 
-<pre><code>basedir "~/rails-apps/simple-blog"
-  add_window do |wo|
-    wo.profile  = "Default"         # Профиль настраивается в терминале
-    wo.geometry = "165x57+0+0"      # Большое окно, закрепляем в левом верхнем углу
-    wo.add_tab do |to|              # редактор №1 весь проект
+<pre><code>basedir "~/rails-apps/simple-blog" # basedir for the project
+  add_window do |wo|     # the first window, user will interact here
+    wo.basedir  = "."               # the same dir, or change it, if you like
+    wo.profile  = "Default"         # Terminal profile, Go MainMenu->Edit->Profiles in your gnome-terminal to setup it.
+    wo.geometry = "165x57+0+0"      # Large window окно, at left-top
+    wo.add_tab do |to|              # editor №1 whole project
       to.command = 'vim'
     end
-    wo.add_tab do |to|              # редактор №2 папка app
+    wo.add_tab do |to|              # editor №2 
       to.command = 'vim'
       to.dir = 'app'
     end
-    wo.add_tab do |to|              # редактор №3 спецификация
+    wo.add_tab do |to|              # editor №3 rspec
       to.command = 'vim'
       to.dir = 'spec'
       to.title = "rspec"
     end
-    wo.add_tab do |to|              # консоль №1
+    wo.add_tab do |to|              # console №1
       to.title = "Shell"
     end
-    wo.add_tab do |to|              # консоль №2
+    wo.add_tab do |to|              # console №2
       to.title = "Shell #2"
     end
-    wo.add_tab do |to|              # консоль рельсов
+    wo.add_tab do |to|              # Rails console
       to.command = "rails c"
       to.title = "rails console"
     end
-  end</code></pre>
-
-  add_window do |wo|    # 2-е окно, тут крутятся фоновые задачи
-    wo.profile  = "Small"             # профиль с мелким шрифтом
-    wo.geometry = "91x28+10000+10000"   # окно небольшое, привязываем к правому нижнему углу
-    wo.add_tab :command => "autotest"       # автотест
-    wo.add_tab :command => "compass watch"  # компасс
-    wo.add_tab :command => "rails s"        # локальный сервер (c) Капитан Очевидность.
   end
+
+  add_window do |wo|    # the second window, user 
+    wo.profile  = "Small"             # Small font profile
+    wo.geometry = "91x28+10000+10000"   # Small window at right bottom corner
+    wo.add_tab :command => "autotest"       # autotes
+    wo.add_tab :command => "compass watch"  # compass
+    wo.add_tab :command => "rails s"        # local rails server :)
+  end</code></pre>
